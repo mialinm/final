@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 function App() {
   const [animeQuote, setAnimeQuote] = useState('');
 
-  useEffect(() => {
-    fetchRandomAnimeQuote();
-  }, []);
 
   const fetchRandomAnimeQuote = async () => {
     try {
-      console.log('Fetching anime quote...'); // Log to check if the function is being executed
-      const response = await axios.get('http://localhost:5000/random-anime-quote');
-      console.log('Response:', response.data); // Log the received data
-      setAnimeQuote(response.data?.quote || 'No quote available');
+      const response = await axios.get('https://animechan.xyz/api/random');
+      console.log(response.data); 
     } catch (error) {
       console.error('Error fetching anime quote:', error);
     }
   };
+  
+  fetchRandomAnimeQuote();
   
 
   return (
