@@ -2,77 +2,29 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
+  const [animeQuote, setAnimeQuote] = useState('');
 
   useEffect(() => {
-    fetchTasks();
+    fetchRandomAnimeQuote();
   }, []);
 
-  const fetchTasks = async () => {
+  const fetchRandomAnimeQuote = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/tasks');
-      setTasks(response.data);
+      console.log('Fetching anime quote...'); // Log to check if the function is being executed
+      const response = await axios.get('http://localhost:5000/random-anime-quote');
+      console.log('Response:', response.data); // Log the received data
+      setAnimeQuote(response.data?.quote || 'No quote available');
     } catch (error) {
-      console.error('Error fetching tasks:', error);
+      console.error('Error fetching anime quote:', error);
     }
   };
-
-  const addTask = async () => {
-    try {
-      const response = await axios.post('http://localhost:3001/tasks', {
-        description: newTask,
-        done: false,
-      });
-      setTasks([...tasks, response.data]);
-      setNewTask('');
-    } catch (error) {
-      console.error('Error adding task:', error);
-    }
-  };
-
-  const updateTask = async (id) => {
-    try {
-      await axios.put(`http://localhost:3001/tasks/${id}`);
-      fetchTasks(); // Refresh tasks after update
-    } catch (error) {
-      console.error('Error updating task:', error);
-    }
-  };
-
-  const deleteTask = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3001/tasks/${id}`);
-      const updatedTasks = tasks.filter(task => task.id !== id);
-      setTasks(updatedTasks);
-    } catch (error) {
-      console.error('Error deleting task:', error);
-    }
-  };
+  
 
   return (
     <div className="App">
-      <h1>To-Do List</h1>
-      <input
-        type="text"
-        value={newTask}
-        onChange={(e) => setNewTask(e.target.value)}
-        placeholder="Enter a new task..."
-      />
-      <button onClick={addTask}>Add Task</button>
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <input
-              type="checkbox"
-              checked={task.done}
-              onChange={() => updateTask(task.id)}
-            />
-            <span>{task.description}</span>
-            <button onClick={() => deleteTask(task.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      <h1>Random Anime Quote</h1>
+      <p>{animeQuote}</p>
+      <button onClick={fetchRandomAnimeQuote}>Get Another Quote</button>
     </div>
   );
 }
