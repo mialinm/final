@@ -1,27 +1,39 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import './App.css';
 
 function App() {
   const [animeQuote, setAnimeQuote] = useState('');
 
+  const handleButtonClick = () => {
+    fetchRandomAnimeQuote('saitama');
+  };
 
-  const fetchRandomAnimeQuote = async () => {
+  const fetchRandomAnimeQuote = async (characterName) => {
     try {
-      const response = await axios.get('https://animechan.xyz/api/random');
-      console.log(response.data); 
+      const response = await fetch(`http://localhost:5001/random-anime-quote?name=${characterName}`);
+      if (!response.ok) {
+        throw new Error('NOPE');
+      }
+      const data = await response.json();
+      setAnimeQuote(data.quote);
     } catch (error) {
-      console.error('Error fetching anime quote:', error);
+      console.error('ERROR:', error);
     }
   };
-  
-  fetchRandomAnimeQuote();
-  
+
+  useEffect(() => {
+    fetchRandomAnimeQuote('saitama');
+  }, []);
 
   return (
-    <div className="App">
-      <h1>Random Anime Quote</h1>
-      <p>{animeQuote}</p>
-      <button onClick={fetchRandomAnimeQuote}>Get Another Quote</button>
+    <div className="app-container">
+      <div className="content">
+        <h1 className="title">Random Anime Quote for Saitama</h1>
+        <p className="quote">{animeQuote}</p>
+        <button className="quote-button" onClick={handleButtonClick}>
+          Get Another Quote
+        </button>
+      </div>
     </div>
   );
 }
